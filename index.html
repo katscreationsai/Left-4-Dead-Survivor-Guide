@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Left 4 Dead survivor guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Barlow:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#1b1c19;--wall2:#242520;--ink:#e2dcc8;--dim:#a49f8c;
+  --blood:#b3221f;--blood2:#7d1514;--safe:#69a64b;--amber:#d1a12f;
+  --line:#3a3b34;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;min-height:100%;color:var(--ink);background-color:var(--wall);
+  font-family:"Barlow","Arial Narrow",Arial,sans-serif;font-size:17px;line-height:1.5;
+  background-image:
+    radial-gradient(ellipse at 50% -10%,rgba(179,34,31,.22),transparent 55%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 2px,transparent 2px 46px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 38px);
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 14px 60px}
+header{padding:30px 0 14px;position:relative}
+.stencil{
+  font-family:"Permanent Marker","Impact",cursive;font-weight:400;
+  color:var(--blood);margin:0;line-height:.95;letter-spacing:.5px;
+  font-size:clamp(2.6rem,11vw,5.4rem);
+  text-shadow:2px 3px 0 rgba(0,0,0,.6);transform:rotate(-1.5deg);
+}
+.sub{margin:10px 0 0;max-width:34em;color:var(--dim);font-size:1.02rem}
+nav{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+  display:flex;gap:6px;padding:8px 0;margin:10px 0 18px;
+  background:linear-gradient(var(--wall) 75%,transparent);
+}
+nav button{
+  flex:1;min-height:46px;padding:8px 6px;cursor:pointer;
+  font:700 1rem "Barlow",sans-serif;color:var(--dim);
+  background:var(--wall2);border:2px solid var(--line);border-radius:3px;
+  transition:background .15s,color .15s,border-color .15s;
+}
+nav button[aria-selected="true"]{color:var(--ink);border-color:var(--blood);background:var(--blood2)}
+nav button:focus-visible,.shoveBtn:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+section[hidden]{display:none}
+h2{font:400 clamp(1.5rem,5vw,2.1rem)/1.1 "Permanent Marker",cursive;margin:26px 0 12px;color:var(--ink)}
+h3{margin:0;font-size:1.25rem}
+
+/* controls */
+.search{
+  width:100%;min-height:48px;padding:10px 14px;margin-bottom:6px;
+  font:500 1rem "Barlow",sans-serif;color:var(--ink);
+  background:#11120f;border:2px solid var(--line);border-radius:3px;
+}
+.hint{margin:0 0 6px;color:var(--dim);font-size:.95rem}
+.group{border-left:5px solid var(--blood);padding-left:12px;margin:0 0 4px}
+.rows{display:grid;gap:8px;grid-template-columns:1fr}
+.row{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  background:var(--wall2);border:1px solid var(--line);border-radius:3px;
+  transition:background .1s,border-color .1s,transform .1s;
+}
+.row.hit{background:#3a1b19;border-color:var(--blood);transform:translateX(4px)}
+.row[hidden]{display:none}
+.keys{display:flex;flex-wrap:wrap;gap:5px;min-width:96px}
+kbd{
+  display:inline-block;min-width:38px;padding:5px 9px 7px;text-align:center;
+  font:700 .95rem "Barlow",sans-serif;color:#15160f;background:var(--ink);
+  border-radius:4px;border-bottom:4px solid #8b8672;box-shadow:0 2px 0 rgba(0,0,0,.6);
+}
+.row.hit kbd{background:var(--amber);border-bottom-color:#8d6a14}
+.what{flex:1}
+.what b{display:block}
+.what span{color:var(--dim);font-size:.93rem}
+.empty{padding:18px;border:2px dashed var(--line);color:var(--dim);text-align:center}
+.tipbox{margin-top:26px;padding:14px 16px;background:var(--wall2);border:2px solid var(--amber);border-radius:3px}
+.tipbox p{margin:6px 0 0}
+
+/* infected */
+.cards{display:grid;gap:16px;grid-template-columns:1fr}
+.card{
+  background:var(--wall2);border:1px solid var(--line);border-top:6px solid var(--blood);
+  border-radius:3px;padding:16px;
+}
+.card header{padding:0;margin-bottom:8px}
+.card header h3{font:400 1.6rem "Permanent Marker",cursive;color:var(--ink)}
+.threat{display:flex;gap:4px;margin-top:6px;align-items:center;color:var(--dim);font-size:.9rem}
+.pip{width:22px;height:8px;background:#11120f;border:1px solid var(--line)}
+.pip.on{background:var(--blood);border-color:var(--blood)}
+.card dl{margin:10px 0 0}
+.card dt{font-weight:700;color:var(--amber);margin-top:10px}
+.card dd{margin:2px 0 0}
+.rules{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.rules li{padding:12px 14px;border-left:5px solid var(--safe);background:var(--wall2)}
+
+/* shove */
+.panel{background:var(--wall2);border:1px solid var(--line);padding:16px;border-radius:3px}
+.big{font-size:1.15rem;margin:0 0 8px}
+.facts{margin:14px 0 0;padding-left:1.2em}
+.facts li{margin-bottom:8px}
+.meter{height:26px;background:#11120f;border:2px solid var(--line);margin:10px 0}
+.fill{height:100%;width:100%;background:var(--safe);transition:width .12s linear,background .2s}
+.fill.low{background:var(--blood)}
+.shoveBtn{
+  width:100%;min-height:76px;font:400 1.9rem "Permanent Marker",cursive;color:var(--ink);
+  background:var(--blood2);border:3px solid var(--blood);border-radius:3px;cursor:pointer;
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;
+}
+.shoveBtn:active{transform:translateY(2px);background:var(--blood)}
+.status{min-height:2.9em;margin:10px 0 0;font-weight:700}
+.status.bad{color:#e0605c}.status.ok{color:var(--safe)}
+.habit{margin-top:18px;display:grid;gap:8px}
+.habit div{padding:10px 14px;background:var(--wall2);border-left:5px solid var(--amber)}
+
+@media(min-width:700px){
+  .rows{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:1fr 1fr}
+  .cards .card:last-child:nth-child(odd){grid-column:1/-1}
+  .habit{grid-template-columns:repeat(3,1fr)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-color-scheme:light){:root{color-scheme:dark}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1 class="stencil">Left 4 Dead survivor guide</h1>
+  <p class="sub">PC controls, the five special infected, and how to shove. Press any key on your keyboard while on the controls tab to see its action light up.</p>
+</header>
+
+<nav role="tablist" aria-label="Guide sections">
+  <button role="tab" id="t-controls" aria-controls="p-controls" aria-selected="true">Controls</button>
+  <button role="tab" id="t-infected" aria-controls="p-infected" aria-selected="false">Special infected</button>
+  <button role="tab" id="t-shove" aria-controls="p-shove" aria-selected="false">Shove</button>
+</nav>
+
+<section id="p-controls" role="tabpanel" aria-labelledby="t-controls">
+  <input class="search" id="q" type="search" placeholder="Search an action or a key, like reload or Tab" aria-label="Search controls">
+  <p class="hint" id="count"></p>
+  <div id="ctl"></div>
+  <div class="tipbox">
+    <h3>Things that are not keys</h3>
+    <p>When you are incapacitated you can still fire your pistol with left click. If you hang from a ledge, a teammate has to pull you up with E. Reviving takes a few seconds, so clear the area first.</p>
+    <p>Playing Infected in Versus changes the controls per class. Left click is the main attack for most, and right click is a secondary ability such as the Tank throwing a rock. Check the Keyboard and Mouse options in the game for every exact binding, and rebind anything you like.</p>
+  </div>
+</section>
+
+<section id="p-infected" role="tabpanel" aria-labelledby="t-infected" hidden>
+  <div class="cards" id="inf"></div>
+  <h2>Two rules for every fight</h2>
+  <ul class="rules">
+    <li>Listen for the audio cues. Each special infected has its own sound, and it often warns you before the attack.</li>
+    <li>Stay together as a team. Almost every special infected is much worse against a lone survivor.</li>
+  </ul>
+  <p class="hint">Spitter, Jockey, and Charger only exist in Left 4 Dead 2.</p>
+</section>
+
+<section id="p-shove" role="tabpanel" aria-labelledby="t-shove" hidden>
+  <div class="panel">
+    <p class="big">Press the right mouse button. That is the whole input.</p>
+    <p>Try it below. On a phone, tap the button. On a computer, right click it or press the button. Each shove costs stamina, and you cannot shove while it is too low.</p>
+    <div class="meter" role="progressbar" aria-label="Shove stamina" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="bar"><div class="fill" id="fill"></div></div>
+    <button class="shoveBtn" id="shove" type="button">Shove</button>
+    <p class="status" id="status" aria-live="polite">Stamina is full. Shove away.</p>
+  </div>
+  <h2>What shoving does</h2>
+  <ul class="facts">
+    <li>It works with any weapon, even when your gun is empty, so it is your emergency button when ammo runs out.</li>
+    <li>It pushes back common infected and staggers special infected, which buys you time to shoot them or get away.</li>
+    <li>Shoving has a stamina limit. Spam it and your shove weakens, then stops for a moment, so use short bursts.</li>
+    <li>Shoving a Hunter mid leap can knock him off course. Shoving a Smoker or Boomer at close range gives you space to finish them.</li>
+    <li>When a teammate is pinned by a Hunter or choked by a Smoker, shoving the infected is the fastest way to free them.</li>
+    <li>With a grenade or melee style item, right click still shoves. The first aid kit uses right click to heal a teammate, so switch slots first if you want to shove.</li>
+  </ul>
+  <div class="habit">
+    <div><b>1. Shove</b><br>when something gets close.</div>
+    <div><b>2. Shoot</b><br>while it is staggered.</div>
+    <div><b>3. Reload</b><br>when the area is clear.</div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+  var controls=[
+    ["Movement","W A S D","Move","Forward, left, back, right",["w","a","s","d"]],
+    ["Movement","Mouse","Look around","",[]],
+    ["Movement","Space","Jump","",[" "]],
+    ["Movement","Ctrl","Crouch","Left Ctrl",["control"]],
+    ["Movement","Shift","Walk","Hold to move slowly and quietly",["shift"]],
+    ["Combat","Left click","Fire","Fire your weapon",[]],
+    ["Combat","Right click","Shove","Pushes back common infected and staggers special infected",[]],
+    ["Combat","R","Reload","",["r"]],
+    ["Combat","E","Use","Pick up items, open doors, press buttons. Hold to revive a downed teammate",["e"]],
+    ["Combat","F","Flashlight","On and off",["f"]],
+    ["Items","1","Primary weapon","Rifle, shotgun, or SMG",["1"]],
+    ["Items","2","Secondary weapon","Pistols",["2"]],
+    ["Items","3","Grenade","Pipe bomb or Molotov. Left click throws it",["3"]],
+    ["Items","4","First aid kit","Hold left click to heal yourself, right click to heal a teammate",["4"]],
+    ["Items","5","Pills","Left click to use them",["5"]],
+    ["Items","Wheel","Cycle items","Scroll through weapons and items",[]],
+    ["Items","Q","Last weapon","Switch back to the weapon you had before",["q"]],
+    ["Team","Z","Vocalize menu","Quick callouts like asking for help or ammo",["z"]],
+    ["Team","V","Push to talk","",["v"]],
+    ["Team","Y","All chat","",["y"]],
+    ["Team","U","Team chat","",["u"]],
+    ["System","Tab","Scoreboard","Hold to view",["tab"]],
+    ["System","Esc","Pause and options","",["escape"]],
+    ["System","~","Developer console","Turn it on first under Options, Keyboard and Mouse",["`","~"]]
+  ];
+  var infected=[
+    {n:"Boomer",t:2,cue:"A gurgling sound.",what:"Slow and fragile. His bile blinds you and draws a whole horde toward you.",ctr:"Shoot him at range, because if he dies close, the bile splashes on you anyway. If he gets near, shove him first and then shoot. If you get vomited on, stay near your team and fight in a corner so the horde cannot surround you."},
+    {n:"Hunter",t:3,cue:"A growl and a screech.",what:"Leaps from a distance and pins you to the ground, dealing damage until someone helps. You cannot act while pinned.",ctr:"A teammate has to shove him off you. Watch rooftops and ledges. A shove or a shot as he leaps can knock him out of the air."},
+    {n:"Smoker",t:3,cue:"A cough.",what:"Sits far away and shoots a long tongue that drags you toward him and chokes you.",ctr:"Break the tongue by shooting it, shoving the Smoker, or killing him. A teammate can free you by hitting the Smoker or the tongue. Look for a clear line of sight when you hear the cough, and do not walk alone."},
+    {n:"Tank",t:5,cue:"His music plays when he spawns.",what:"Huge health and heavy hits. He can throw chunks of concrete, and one hit can incapacitate a survivor.",ctr:"Do not stand in a clump, because he can toss rocks and punch several people at once. Keep moving and retreat in a circle while the whole team focuses fire. Molotovs are strong because he keeps burning."},
+    {n:"Witch",t:4,cue:"She sits crying.",what:"Harmless until startled. If she gets startled, she can kill a survivor very fast.",ctr:"Do not shine your flashlight on her, shoot near her, or get close. To pass her, turn your flashlight off, crouch, and walk wide. A close range shotgun blast to the head from the whole team can take her down in one burst, but it is risky."}
+  ];
+
+  /* tabs */
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(id){
+    tabs.forEach(function(b){
+      var on=b.id===id;
+      b.setAttribute('aria-selected',on);
+      document.getElementById(b.getAttribute('aria-controls')).hidden=!on;
+    });
+    try{history.replaceState(null,'','#'+id.slice(2))}catch(e){}
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){show(b.id)})});
+  tabs.forEach(function(b,i){
+    b.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+        var n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];
+        n.focus();show(n.id);e.preventDefault();
+      }
+    });
+  });
+  var h=(location.hash||'').slice(1);
+  if(['controls','infected','shove'].indexOf(h)>-1)show('t-'+h);
+
+  /* controls render */
+  var ctl=document.getElementById('ctl'),rows=[];
+  var groups={};
+  controls.forEach(function(c){(groups[c[0]]=groups[c[0]]||[]).push(c)});
+  Object.keys(groups).forEach(function(g){
+    var wrap=document.createElement('div');
+    var title=document.createElement('h2');title.textContent=g;
+    var grid=document.createElement('div');grid.className='rows';
+    groups[g].forEach(function(c){
+      var r=document.createElement('div');r.className='row';
+      var k=document.createElement('div');k.className='keys';
+      c[1].split(' ').forEach(function(p){var kb=document.createElement('kbd');kb.textContent=p;k.appendChild(kb)});
+      var w=document.createElement('div');w.className='what';
+      var b=document.createElement('b');b.textContent=c[2];w.appendChild(b);
+      if(c[3]){var s=document.createElement('span');s.textContent=c[3];w.appendChild(s)}
+      r.appendChild(k);r.appendChild(w);grid.appendChild(r);
+      rows.push({el:r,keys:c[4],text:(c[1]+' '+c[2]+' '+c[3]).toLowerCase(),group:wrap});
+    });
+    wrap.appendChild(title);wrap.appendChild(grid);ctl.appendChild(wrap);
+  });
+  var empty=document.createElement('div');empty.className='empty';empty.hidden=true;
+  empty.textContent='No control matches that search. Try a different word or clear the box.';
+  ctl.appendChild(empty);
+  var q=document.getElementById('q'),count=document.getElementById('count');
+  function filter(){
+    var v=q.value.trim().toLowerCase(),n=0;
+    rows.forEach(function(r){var m=!v||r.text.indexOf(v)>-1;r.el.hidden=!m;if(m)n++});
+    var seen=[];
+    rows.forEach(function(r){if(!r.el.hidden&&seen.indexOf(r.group)<0)seen.push(r.group)});
+    rows.forEach(function(r){r.group.hidden=seen.indexOf(r.group)<0});
+    empty.hidden=n>0;
+    count.textContent=n+' of '+rows.length+' controls shown';
+  }
+  q.addEventListener('input',filter);filter();
+
+  /* live key highlight */
+  var timers=[];
+  document.addEventListener('keydown',function(e){
+    if(document.getElementById('p-controls').hidden)return;
+    if(document.activeElement===q)return;
+    var k=e.key.toLowerCase();
+    var hit=rows.filter(function(r){return r.keys.indexOf(k)>-1&&!r.el.hidden});
+    if(!hit.length)return;
+    if(k==='tab'||k===' ')e.preventDefault();
+    hit.forEach(function(r){
+      r.el.classList.add('hit');
+      clearTimeout(r.t);r.t=setTimeout(function(){r.el.classList.remove('hit')},700);
+    });
+    hit[0].el.scrollIntoView({block:'center',behavior:'smooth'});
+  });
+
+  /* infected render */
+  var inf=document.getElementById('inf');
+  infected.forEach(function(d){
+    var c=document.createElement('article');c.className='card';
+    var pips='';for(var i=1;i<=5;i++)pips+='<span class="pip'+(i<=d.t?' on':'')+'"></span>';
+    c.innerHTML='<header><h3></h3><div class="threat" aria-label="Danger '+d.t+' out of 5">'+pips+'<span>&nbsp;danger '+d.t+' of 5</span></div></header>'+
+      '<dl><dt>What it does</dt><dd></dd><dt>How you hear it</dt><dd></dd><dt>How to handle it</dt><dd></dd></dl>';
+    c.querySelector('h3').textContent=d.n;
+    var dd=c.querySelectorAll('dd');
+    dd[0].textContent=d.what;dd[1].textContent=d.cue;dd[2].textContent=d.ctr;
+    inf.appendChild(c);
+  });
+
+  /* shove trainer */
+  var st=100,last=0,btn=document.getElementById('shove'),fill=document.getElementById('fill'),
+      bar=document.getElementById('bar'),msg=document.getElementById('status'),lock=false,hits=0;
+  function paint(){
+    fill.style.width=st+'%';fill.className='fill'+(st<35?' low':'');
+    bar.setAttribute('aria-valuenow',Math.round(st));
+  }
+  function say(t,c){msg.textContent=t;msg.className='status '+(c||'')}
+  function shove(){
+    if(lock||st<25){
+      lock=true;say('Too tired. Wait for your stamina to come back before you shove again.','bad');return;
+    }
+    st=Math.max(0,st-22);hits++;paint();
+    say(st<25?'That one landed, but you are nearly spent. Stop and recover. Shoves landed: '+hits:'Shove landed. Shoves landed: '+hits,'ok');
+  }
+  btn.addEventListener('click',shove);
+  btn.addEventListener('contextmenu',function(e){e.preventDefault();shove()});
+  setInterval(function(){
+    var now=Date.now();
+    if(st<100){st=Math.min(100,st+3);paint()}
+    if(lock&&st>=60){lock=false;say('Stamina is back. Shove away.','ok')}
+    if(!lock&&st===100&&hits&&now-last>0){last=now}
+  },250);
+})();
+</script>
+</body>
+</html>
